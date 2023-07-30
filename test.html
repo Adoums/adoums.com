@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YEAGER</title>
+    <style>
+        body {
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+            letter-spacing: 5px;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            user-select: none;
+            position: relative;
+            overflow: hidden; /* Empêche le crop de l'image */
+        }
+        #background-image {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            background-size: contain;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: none; /* Masque la div tant que l'image n'est pas chargée */
+            z-index: -1; /* Met l'image en arrière-plan */
+        }
+        audio {
+            display: none;
+        }
+        .banane {
+            position: absolute;
+            font-size: 6vw;
+            color: white;
+            word-wrap: break-word;
+            max-width: 90%;
+            z-index: 1; /* Met les bananes au-dessus de l'image */
+        }
+    </style>
+</head>
+<body>
+    <div id="background-image"></div>
+    <span class="banane" id="banane1">🍌</span>
+    <span class="banane" id="banane2">🍌</span>
+    <script>
+        const backgroundImg = new Image();
+        backgroundImg.onload = function () {
+            document.getElementById("background-image").style.backgroundImage = `url(${backgroundImg.src})`;
+            document.getElementById("background-image").style.display = "block";
+            positionBananas();
+        };
+        backgroundImg.src = "/banane.jpg";
+
+        function positionBananas() {
+            const imageWidth = backgroundImg.width;
+            const bananeWidth = document.getElementById("banane1").offsetWidth;
+            const spaceBetweenBananas = 0.1 * imageWidth; // Espace de 10% de la largeur de l'image entre les bananes
+
+            const centerLeft = (window.innerWidth - (bananeWidth * 2) - spaceBetweenBananas) / 2;
+
+            document.getElementById("banane1").style.left = `${centerLeft}px`;
+            document.getElementById("banane2").style.left = `${centerLeft + bananeWidth + spaceBetweenBananas}px`;
+            document.getElementById("banane1").style.top = "50%";
+            document.getElementById("banane2").style.top = "50%";
+            document.getElementById("banane1").style.transform = "translateY(-50%)";
+            document.getElementById("banane2").style.transform = "translateY(-50%)";
+        }
+
+        window.addEventListener("resize", positionBananas);
+
+
+        const bananes = document.getElementsByTagName("span");
+        const audio = new Audio("https://enzofontaine.com/son.mp3");
+        audio.repeat = true;
+        audio.volume = 0;
+        for(let i = 0; i < bananes.length; i++) {
+            bananes[i].onclick = () => {
+                audio.play().then(() => {
+                    audio.currentTime = 0;
+                    audio.pause();
+                    audio.volume = 1;
+                    audio.play();
+                });
+            };
+        }
+    </script>
+</body>
+</html>
